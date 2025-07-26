@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Employee Management System</title>
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        body {
+           background: #accffe;
+            min-height: 100vh;
+            padding-top: 30px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+        h2 {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        .table {
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }   
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .table th a {
+            color: white;
+            text-decoration: none;
+        }
+        .table th a:hover {
+            text-decoration: underline;
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .actions a {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        .actions .edit {
+            color: #17a2b8;
+        }
+        .actions .edit:hover {
+            color: #138496;
+        }
+        .actions .delete {
+            color: #dc3545;
+        }
+        .actions .delete:hover {
+            color: #c82333;
+        }
+        .pagination {
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .page-link {
+            color: #007bff;
+        }
+        .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2><i class="fas fa-users"></i> Employee Management System</h2>
+
+    <div th:if="${employees != null}">
+        <a class="btn btn-add mb-3" th:href="@{/employee/showNewEmployeeForm}">
+            <i class="fas fa-user-plus"></i> Add Employee
+        </a>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th><a th:href="|@{/employee/page/1(sortField='firstName',sortDir=${reverseSortDir})}|">First Name</a></th>
+                    <th><a th:href="|@{/employee/page/1(sortField='lastName',sortDir=${reverseSortDir})}|">Last Name</a></th>
+                    <th><a th:href="|@{/employee/page/1(sortField='email',sortDir=${reverseSortDir})}|">Email</a></th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="employee : ${listEmployees}">
+                    <td th:text="${employee.firstName}">First Name</td>
+                    <td th:text="${employee.lastName}">Last Name</td>
+                    <td th:text="${employee.email}">Email</td>
+                    <td class="actions text-center">
+                        <a class="edit" th:href="@{/employee/showFormForUpdate/{id}(id=${employee.id})}" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a class="delete" th:href="@{/employee/deleteEmployee/{id}(id=${employee.id})}" title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <ul class="pagination">
+            <!-- Previous Button -->
+            <li th:if="${currentPage > 1}" class="page-item">
+                <a class="page-link" th:href="@{/employee/page/{pageNo}(pageNo=${currentPage - 1}, sortField=${sortField}, sortDir=${sortDir})}">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>
+
+            <!-- Page Numbers -->
+            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
+                <a class="page-link" th:href="@{/employee/page/{pageNo}(pageNo=${i}, sortField=${sortField}, sortDir=${sortDir})}" th:text="${i}"></a>
+            </li>
+
+            <!-- Next Button -->
+            <li th:if="${currentPage < totalPages}" class="page-item">
+                <a class="page-link" th:href="@{/employee/page/{pageNo}(pageNo=${currentPage + 1}, sortField=${sortField}, sortDir=${sortDir})}">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
